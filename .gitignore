@@ -1,0 +1,20 @@
+# Dữ liệu lớn — tái tạo bằng src/ (vượt giới hạn 100MB của GitHub)
+data/
+
+# Log chạy pipeline
+logs/
+
+# Model nặng (regenerable: python src/train_extra_tasks.py)
+models/fire_cause_lgbm.joblib
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# SQLite tạm
+*.sqlite-wal
+*.sqlite-shm
+
+# Hệ thống
+.DS_Store

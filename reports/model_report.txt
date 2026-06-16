@@ -1,0 +1,159 @@
+>> đọc model_data ...
+   train<=2016:1,962,458 val2017:82,279 test18-20:217,679 OOD:175,141
+   base rate cháy lớn -> test 2.72% | OOD 4.14%
+
+>> tinh chỉnh HGB (grid theo val 2017 PR-AUC) ...
+   {'learning_rate': 0.1, 'max_leaf_nodes': 63, 'min_samples_leaf': 50, 'l2_regularization': 1.0} -> val PR-AUC=0.2391
+   {'learning_rate': 0.1, 'max_leaf_nodes': 127, 'min_samples_leaf': 50, 'l2_regularization': 1.0} -> val PR-AUC=0.2489
+   {'learning_rate': 0.2, 'max_leaf_nodes': 63, 'min_samples_leaf': 50, 'l2_regularization': 1.0} -> val PR-AUC=0.2338
+   {'learning_rate': 0.2, 'max_leaf_nodes': 127, 'min_samples_leaf': 50, 'l2_regularization': 1.0} -> val PR-AUC=0.2407
+   >>> tốt nhất: {'learning_rate': 0.1, 'max_leaf_nodes': 127, 'min_samples_leaf': 50, 'l2_regularization': 1.0} (val PR-AUC=0.2489)
+
+>> LogisticRegression baseline ...
+
+===== SO SÁNH TRÊN TEST 2018-2020 =====
+   LogReg                             ROC-AUC=0.8508  PR-AUC=0.1895  (base 2.72%)
+   HGB tuned (model chọn)             ROC-AUC=0.8712  PR-AUC=0.2207  (base 2.72%)
+
+===== TRÊN OOD NIFC 2021-2026 (cảnh báo khác độ phủ) =====
+   LogReg                             ROC-AUC=0.8085  PR-AUC=0.1984  (base 4.14%)
+   HGB tuned                          ROC-AUC=0.8175  PR-AUC=0.2098  (base 4.14%)
+
+>> tối ưu ngưỡng (HGB, test) ...
+
+  --- ngưỡng mặc định 0.50 ---
+  confusion [[TN FP][FN TP]]: [[172086, 39668], [1407, 4518]]
+                precision    recall  f1-score   support
+  
+           nhỏ      0.992     0.813     0.893    211754
+           lớn      0.102     0.763     0.180      5925
+  
+      accuracy                          0.811    217679
+     macro avg      0.547     0.788     0.537    217679
+  weighted avg      0.968     0.811     0.874    217679
+  
+
+  --- ngưỡng best-F1=0.848 ---
+  confusion [[TN FP][FN TP]]: [[206011, 5743], [3854, 2071]]
+                precision    recall  f1-score   support
+  
+           nhỏ      0.982     0.973     0.977    211754
+           lớn      0.265     0.350     0.301      5925
+  
+      accuracy                          0.956    217679
+     macro avg      0.623     0.661     0.639    217679
+  weighted avg      0.962     0.956     0.959    217679
+  
+
+  --- ngưỡng recall>=0.80 thr=0.451 ---
+  confusion [[TN FP][FN TP]]: [[165647, 46107], [1185, 4740]]
+                precision    recall  f1-score   support
+  
+           nhỏ      0.993     0.782     0.875    211754
+           lớn      0.093     0.800     0.167      5925
+  
+      accuracy                          0.783    217679
+     macro avg      0.543     0.791     0.521    217679
+  weighted avg      0.968     0.783     0.856    217679
+  
+
+>> permutation importance (mẫu 50k test) ...
+  hist_cell_rate         0.0961
+  STATE                  0.0762
+  hist_cell_logn         0.0656
+  STAT_CAUSE_DESCR       0.0349
+  OWNER_DESCR            0.0196
+  dist_largefire_log     0.0171
+  LONGITUDE              0.0103
+  hist_cellmonth_rate    0.0090
+  DOY_SIN                0.0049
+  DOY_COS                0.0043
+  hist_state_rate        0.0024
+  hist_state_logn        0.0014
+  LATITUDE               0.0010
+  DAY_OF_WEEK            0.0008
+  MONTH_SIN              0.0002
+  FIRE_YEAR              0.0000
+  IS_WEEKEND             0.0000
+  REGION                -0.0000
+  MONTH_COS             -0.0025
+
+>> đã lưu models/large_fire_hgb.joblib
+>> SO VỚI BASELINE v1 (PR-AUC test 0.170): HGB mới = 0.221
+============================================================
+BƯỚC 2 — SO SÁNH BOOSTING (HGB / LightGBM / XGBoost)
+============================================================
+>> đọc model_data ...
+   test n=217,679 base=2.72% | scale_pos_weight=33.5
+
+>> HGB grid ...
+   lr=0.1 leaf=63 -> val PR-AUC=0.2391
+   lr=0.1 leaf=127 -> val PR-AUC=0.2489
+   lr=0.2 leaf=63 -> val PR-AUC=0.2338
+   lr=0.2 leaf=127 -> val PR-AUC=0.2407
+
+>> LightGBM grid ...
+   lr=0.05 leaves=63 best_iter=596 -> val PR-AUC=0.2484
+   lr=0.05 leaves=127 best_iter=514 -> val PR-AUC=0.2501
+   lr=0.1 leaves=63 best_iter=297 -> val PR-AUC=0.2464
+   lr=0.1 leaves=127 best_iter=111 -> val PR-AUC=0.2398
+
+>> XGBoost grid ...
+   lr=0.05 depth=6 best_iter=555 -> val PR-AUC=0.2478
+   lr=0.05 depth=8 best_iter=309 -> val PR-AUC=0.2538
+   lr=0.1 depth=6 best_iter=357 -> val PR-AUC=0.2448
+   lr=0.1 depth=8 best_iter=181 -> val PR-AUC=0.2501
+
+===== KẾT QUẢ TEST 2018-2020 / OOD NIFC =====
+   Model         ROC test   PR test   ROC OOD    PR OOD
+   HGB             0.8712    0.2207    0.8175    0.2098
+   LightGBM        0.8751    0.2260    0.8222    0.2062
+   XGBoost         0.8752    0.2252    0.7729    0.1858
+
+   >>> TỐT NHẤT theo PR-AUC test: LightGBM (PR-AUC=0.2260)
+   (HGB v3 trước đó PR-AUC=0.221; baseline v1=0.170)
+>> đã lưu model tốt nhất (LightGBM) -> models/large_fire_best.joblib
+>> biểu đồ -> reports/figures/model_compare.png
+============================================================
+BƯỚC 3 — THÊM BÀI TOÁN: hồi quy diện tích & phân loại nguyên nhân
+============================================================
+>> đọc model_data + FIRE_SIZE ...
+
+########## A) HỒI QUY log(diện tích) ##########
+   train 2,044,737 | test 217,679
+   [log-space] RMSE=1.140  MAE=0.733  R2=0.247
+   [acres] median |error| = 0.85 acres (diện tích TB test=108.7)
+   top feature:
+   LONGITUDE           4841
+   LATITUDE            4405
+   STATE               3948
+   STAT_CAUSE_DESCR    2996
+   hist_cell_logn      2834
+   OWNER_DESCR         2827
+   FIRE_YEAR           2704
+   hist_state_logn     2612
+   >> lưu models/fire_size_lgbm.joblib, biểu đồ size_regression.png
+
+########## B) PHÂN LOẠI NGUYÊN NHÂN (12 lớp) ##########
+   train 1,829,224 | test 136,077 | 12 lớp
+   accuracy=0.394 (baseline đoán lớp phổ biến=0.348) | macro-F1=0.279
+                   precision    recall  f1-score   support
+   
+            Arson      0.592     0.360     0.448     16514
+         Campfire      0.396     0.481     0.435      9726
+         Children      0.123     0.137     0.130      2575
+   Debris Burning      0.731     0.396     0.514     47306
+    Equipment Use      0.373     0.218     0.275     21880
+        Fireworks      0.258     0.561     0.354      2124
+        Lightning      0.757     0.553     0.639     22315
+    Miscellaneous      0.619     0.013     0.025      2035
+        Powerline      0.097     0.668     0.169      6462
+         Railroad      0.204     0.134     0.162      1352
+          Smoking      0.158     0.267     0.199      3788
+        Structure      0.000     0.000     0.000         0
+   
+         accuracy                          0.394    136077
+        macro avg      0.359     0.316     0.279    136077
+     weighted avg      0.565     0.394     0.437    136077
+   
+   >> lưu models/fire_cause_lgbm.joblib, biểu đồ cause_confusion.png

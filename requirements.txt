@@ -1,0 +1,8 @@
+# Python 3.9+. LightGBM/XGBoost cần libomp trên macOS: brew install libomp
+pandas>=2.0
+numpy>=1.24
+scikit-learn>=1.3
+matplotlib>=3.7
+lightgbm>=4.0
+xgboost>=2.0
+joblib>=1.3
