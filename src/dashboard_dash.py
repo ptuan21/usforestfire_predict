@@ -104,7 +104,11 @@ def render(tab):
                 html.Div(id="metrics",style={"display":"flex","flexWrap":"wrap","gap":"8px"}),
                 html.Div(style={"height":"12px"}),
                 html.Div(id="note",style={"backgroundColor":"#fff5f3","border":f"1px solid #f3c9bf",
-                    "borderLeft":f"3px solid {C_ACC}","borderRadius":"8px","padding":"12px","fontSize":"14px"})]),
+                    "borderLeft":f"3px solid {C_ACC}","borderRadius":"8px","padding":"12px","fontSize":"14px"}),
+                html.Div(style={"height":"10px"}),
+                html.Div("Dữ liệu thời tiết gridMET tới ~15/06/2026. Cháy thực tế 2015–2020 từ FPA FOD, "
+                         "2021–2026 từ NIFC (bỏ sót cháy nhỏ nên ít chấm xanh hơn thực tế).",
+                         style={"color":C_MUTE,"fontSize":"12px","lineHeight":"1.5"})]),
             html.Div(style={**CARD,"flex":"3","minWidth":"480px","padding":"8px"},children=[
                 dcc.Graph(id="risk_map",config={"displayModeBar":False},style={"height":"600px"})])])
     if tab=="nat":

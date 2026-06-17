@@ -26,9 +26,12 @@ Giao diện web trực quan hoá: bản đồ rủi ro cháy California chọn t
 
 ```bash
 pip install dash plotly
-python3 src/precompute_dashboard_data.py   # tạo dữ liệu nhẹ cho dashboard (cần model + panel)
-python3 src/dashboard_dash.py              # mở http://127.0.0.1:8050
+python3 src/precompute_dashboard_data.py    # dữ liệu nhẹ cho dashboard (rủi ro 2015–2020)
+python3 src/extend_risk_2021_2026.py        # mở rộng bản đồ rủi ro tới 2021–2026 (gridMET gần hiện tại)
+python3 src/dashboard_dash.py               # mở http://127.0.0.1:8050
 ```
+
+Bản đồ rủi ro phủ **2015–2026** (gridMET cập nhật tới ~15/06/2026). Dự báo *tương lai thật sự* (tuần chưa xảy ra) cần thêm **dự báo thời tiết** làm đầu vào — hiện phủ tới mốc dữ liệu mới nhất.
 
 3 tab: **Bản đồ rủi ro** (chọn năm/tuần → bản đồ xác suất cháy + cháy thực tế, ngưỡng cảnh báo), **Tổng quan toàn quốc** (số vụ/diện tích theo năm, nguyên nhân, mùa, bản đồ theo bang), **Hiệu năng mô hình**. App đọc dữ liệu tính sẵn nên không cần LightGBM khi chạy.
 
