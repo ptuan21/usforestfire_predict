@@ -1,0 +1,34 @@
+>> đọc panel ...
+   393,128 ô-tuần | positives 7.50%
+
+===== 1) TEMPORAL: train 2015-2019, test 2020 =====
+   temporal 2020              ROC-AUC=0.9318  PR-AUC=0.5829  (base 8.22%)
+   PR-AUC gấp 7.1x base rate
+
+===== 2) SPATIAL BLOCK CV (4 khối không gian) =====
+   giữ khối 0 (n=107,985)     ROC-AUC=0.8246  PR-AUC=0.4754  (base 15.40%)
+   giữ khối 1 (n=96,404)      ROC-AUC=0.8954  PR-AUC=0.3859  (base 7.39%)
+   giữ khối 2 (n=93,587)      ROC-AUC=0.9628  PR-AUC=0.5943  (base 5.66%)
+   giữ khối 3 (n=95,152)      ROC-AUC=0.9484  PR-AUC=0.0762  (base 0.45%)
+   TB spatial: ROC-AUC=0.9078  PR-AUC=0.3830
+
+>> train model cuối trên toàn panel ...
+   feature importance:
+   hist_fire_log      3523
+   elev               2932
+   rmin               2750
+   fm1000             2581
+   tmmx               2573
+   vs                 2447
+   vpd                2433
+   bi                 2352
+   fm100              2330
+   pr                 2197
+   lat                2183
+   clim_cell_month    2172
+   lon                2010
+   erc                1690
+   woy_sin            1573
+   woy_cos            1454
+
+>> đã lưu models/fire_occurrence_lgbm.joblib

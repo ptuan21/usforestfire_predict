@@ -2,6 +2,24 @@
 
 Dự án ML dự đoán cháy rừng tại Mỹ, dựa trên dữ liệu FPA FOD mở rộng (1992–2026).
 
+## ⭐ Tầng 1 — Dự báo KHẢ NĂNG PHÁT CHÁY (bản đồ rủi ro, California)
+
+Khác với các model "mô tả cháy đã biết" (quy mô/nguyên nhân), đây là model **dự báo nơi/lúc sẽ phát cháy** — đúng mục tiêu gốc. Cách làm:
+- **Panel space-time**: lưới ~0.25° × **tuần**, California 2015–2020 (393k ô-tuần; ô-tuần không cháy = mẫu âm tự nhiên). Tỉ lệ cháy 7.5%.
+- **Feature nhân quả từ gridMET** (lưới 4km, OPeNDAP): ERC, Burning Index, độ ẩm nhiên liệu chết (fm100/fm1000 — proxy hạn hán), gió, nhiệt độ, độ ẩm, mưa, VPD; + **địa hình** (độ cao) + **lịch sử cháy** 1992–2014 + mùa.
+
+| Đánh giá | ROC-AUC | PR-AUC | base |
+|---|---|---|---|
+| Temporal (train 2015–2019 → **test 2020**) | **0.932** | **0.583** | 8.2% |
+| Spatial block CV (giữ vùng chưa thấy) | 0.908 | 0.383 | — |
+
+**Thực dụng:** trong tuần cao điểm 2020, **top-20 ô rủi ro cao nhất → 95% thực sự có cháy** (top-50: 88%, top-100: 81%). Feature mạnh nhất: lịch sử cháy, độ cao, độ ẩm (rmin), độ ẩm nhiên liệu (fm1000), nhiệt độ — đúng các yếu tố nhân quả.
+
+![Bản đồ rủi ro cháy California](reports/figures/risk_map.png)
+
+Pipeline: `src/build_ca_panel.py` → `build_ca_features.py` → `train_occurrence.py` → `make_risk_map.py`.
+Cần `xarray`, `netCDF4` (đọc gridMET OPeNDAP). Hạn chế POC: mới làm cho California; tổng quát sang *vùng* mới kém hơn sang *năm* mới; chưa có PDSI (thay bằng fm1000/ERC).
+
 ## Cấu trúc thư mục
 
 ```
