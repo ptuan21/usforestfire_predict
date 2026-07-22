@@ -2,7 +2,7 @@
 
 Dự án ML dự đoán cháy rừng tại Mỹ, dựa trên dữ liệu FPA FOD mở rộng (1992–2026).
 
-## ⭐ Tầng 1 — Dự báo KHẢ NĂNG PHÁT CHÁY (bản đồ rủi ro, California)
+## Tầng 1 — Dự báo KHẢ NĂNG PHÁT CHÁY (bản đồ rủi ro, California)
 
 Khác với các model "mô tả cháy đã biết" (quy mô/nguyên nhân), đây là model **dự báo nơi/lúc sẽ phát cháy** — đúng mục tiêu gốc. Cách làm:
 - **Panel space-time**: lưới ~0.25° × **tuần**, California 2015–2020 (393k ô-tuần; ô-tuần không cháy = mẫu âm tự nhiên). Tỉ lệ cháy 7.5%.
